@@ -93,7 +93,7 @@ export default function App() {
     if (!error && saved) { await supabase.from('meal_plan_entries').delete().eq('meal_plan_id', saved.id); await supabase.from('meal_plan_entries').insert(plan.flatMap((recipe, day_of_week) => recipe ? [{ meal_plan_id: saved.id, recipe_id: recipe.id, day_of_week, meal_type: 'dinner' }] : [])); setNotice('Plan saved securely to your account.') } else setNotice('Could not save your plan. Please try again.')
     setLoading(false)
   }
-  async function sendMagicLink(e: React.FormEvent) { e.preventDefault(); if (!supabase) { setNotice('Add Supabase environment values to enable sign-in.'); setAuthOpen(false); return }; const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } }); setNotice(error ? error.message : 'Check your inbox for your magic link.'); setAuthOpen(false) }
+  async function sendMagicLink(e: React.FormEvent) { e.preventDefault(); if (!supabase) { setNotice('Add Supabase environment values to enable sign-in.'); setAuthOpen(false); return }; const redirectUrl = new URL(import.meta.env.BASE_URL, window.location.origin).toString(); const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectUrl } }); setNotice(error ? error.message : 'Check your inbox for your magic link.'); setAuthOpen(false) }
   async function signOut() { if (!supabase) return; await supabase.auth.signOut(); setNotice('You have signed out.') }
 
   return <div className="min-h-screen bg-[#f9f8f4] text-[#17302b]">
